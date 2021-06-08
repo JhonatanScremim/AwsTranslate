@@ -6,4 +6,9 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="3.7.1" />
+    <PackageReference Include="AWSSDK.Translate" Version="3.7.0.29" />
+  </ItemGroup>
+
 </Project>
