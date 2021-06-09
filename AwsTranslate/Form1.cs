@@ -88,9 +88,9 @@ namespace AwsTranslate
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string WhataDelightMan = comboBoxInput.Text;
+            string input = comboBoxInput.Text;
             comboBoxInput.Text = comboBoxOutput.Text;
-            comboBoxOutput.Text = WhataDelightMan;
+            comboBoxOutput.Text = input;
         }
     }
 }
