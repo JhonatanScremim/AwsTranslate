@@ -1,17 +1,9 @@
 ﻿using Amazon;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
-using Amazon.S3;
 using Amazon.Translate;
 using Amazon.Translate.Model;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AwsTranslate
@@ -23,16 +15,9 @@ namespace AwsTranslate
             InitializeComponent();
         }
 
-        string credentialName = "AWS Educate";
+        string credentialName = "FelixAWS";
         AWSCredentials credentials;
         private static readonly RegionEndpoint region = RegionEndpoint.USEast1;
-
-        AmazonS3Client client;
-
-        private readonly string sourceLang = "pt-br";
-        private readonly string targetLang = "en-us";
-
-
 
         private void GetCredentials()
         {
@@ -43,30 +28,69 @@ namespace AwsTranslate
             }
         }
 
-        private void S3Client()
-        {
-            GetCredentials();
-            client = new AmazonS3Client(credentials, region);
-        }
-
         private async void button1_Click(object sender, EventArgs e)
         {
             GetCredentials();
 
-            using (var clientTranslate = new AmazonTranslateClient(credentials))
+            using (var clientTranslate = new AmazonTranslateClient(credentials, region))
             {
+                if(string.IsNullOrEmpty(comboBoxInput.Text) || string.IsNullOrEmpty(comboBoxOutput.Text) || string.IsNullOrEmpty(richTextBoxInput.Text))
+                {
+                    MessageBox.Show("ERRO, Campos vazios, por favor preencha todos os campos");
+                    return;
+                }
+
+                string text = richTextBoxInput.Text;
+                string sourceLang = GetLangCode(comboBoxInput.Text);
+                string targetLang = GetLangCode(comboBoxOutput.Text);
+
                 var request = new TranslateTextRequest()
                 {
                     SourceLanguageCode = sourceLang,
                     TargetLanguageCode = targetLang,
-                    Text = "Mesa cadeira livro campo tenis"
+                    Text = text
                 };
 
-
                 var response = await clientTranslate.TranslateTextAsync(request);
+
+                if (response == null || string.IsNullOrEmpty(response?.TranslatedText))
+                {
+                    MessageBox.Show("ERRO, Resposta não encontrada.");
+                    return;
+                }
+                richTextBoxOutput.Text = response.TranslatedText;
             }
+        }
 
 
+        private string GetLangCode(string combo)
+        {
+            combo = combo.ToLower();
+
+            switch (combo)
+            {
+                case "português":
+                    return "pt";
+                case "inglês":
+                    return "en";
+                case "francês":
+                    return "fr";
+                case "suéco":
+                    return "sv";
+                case "coreano":
+                    return "ko";
+                case "espanhol":
+                    return "es";
+                default:
+                    return null;
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string WhataDelightMan = comboBoxInput.Text;
+            comboBoxInput.Text = comboBoxOutput.Text;
+            comboBoxOutput.Text = WhataDelightMan;
         }
     }
 }
